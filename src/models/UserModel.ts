@@ -3,6 +3,17 @@ import { User } from '../entities/User';
 
 const userRepository = AppDataSource.getRepository(User);
 
+async function allUserData(): Promise<User[]> {
+  // if (process.env.NODE_ENV == 'dev') {
+  //   const allUsers = await userRepository.find();
+
+  //   return allUsers;
+  // }
+  const allUsers = await userRepository.find();
+
+  return allUsers;
+} // getting back all of the data. makesure to take out the data for the project.
+
 async function addUser(email: string, passwordHash: string): Promise<User> {
   // Create the new user object
   let newUser = new User();
@@ -16,9 +27,15 @@ async function addUser(email: string, passwordHash: string): Promise<User> {
 
   return newUser;
 }
-async function getAllUsers(): Promise<User[]> {
-  return await userRepository.find();
+
+async function getAllUsers(req: Request, res: Response): Promise<void> {
+  const users = await allUserData();
+
+  res.json(users);
 }
+// async function getAllUsers(): Promise<User[]> {
+//   return await userRepository.find();
+// }
 
 // async function getAllUnverifiedUsers(): Promise<User[]> {
 //   return userRepository.find({ where: { verifiedEmail: false } });
@@ -47,15 +64,28 @@ async function getUserByEmail(email: string): Promise<User | null> {
 //   return user;
 // } //cannot fit the userid in number bc the data is big for number
 
+// async function getUserById(userId: string): Promise<User[] | null> {
+//   if (!userId) {
+//     return null;
+//   }
+//   const user = await userRepository
+//     .createQueryBuilder('user')
+//     .where({ userId })
+//     .select(['user.email', 'user.profileViews', 'user.joined0n', 'user.userId'])
+//     .getMany();
+
+//   return user;
+// }
 async function getUserById(userId: string): Promise<User[] | null> {
-  if (!userId) {
-    return null;
-  }
-  const user = await userRepository
-    .createQueryBuilder('user')
-    .where({ userId })
-    .select(['user.email', 'user.profileViews', 'user.joined0n', 'user.userId'])
-    .getMany();
+  const user = await userRepository.findOne({
+    select: {
+      userId: true,
+      email: true,
+      profileViews: true,
+      verifiedEmail: true,
+    },
+    where: { userId },
+  });
 
   return user;
 }
