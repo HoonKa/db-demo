@@ -28,14 +28,14 @@ async function addUser(email: string, passwordHash: string): Promise<User> {
   return newUser;
 }
 
-async function getAllUsers(req: Request, res: Response): Promise<void> {
-  const users = await allUserData();
+// async function getAllUsers(req: Request, res: Response): Promise<void> {
+//   const users = await allUserData();
 
-  res.json(users);
-}
-// async function getAllUsers(): Promise<User[]> {
-//   return await userRepository.find();
+//   res.json(users);
 // }
+async function getAllUsers(): Promise<User[]> {
+  return await userRepository.find();
+}
 
 // async function getAllUnverifiedUsers(): Promise<User[]> {
 //   return userRepository.find({ where: { verifiedEmail: false } });
@@ -53,21 +53,18 @@ async function getUserByEmail(email: string): Promise<User | null> {
   return user;
 }
 
-// async function getUserById(userId: string): Promise<User | null> {
-//   const user = await userRepository.findOne({ where: { userId } });
-
-//   return user;
-// }
-// async function getUserById(id: string): Promise<User | null> {
-//   const user = await userRepository.findOne({ where: { userId: id } });
-
-//   return user;
-// } //cannot fit the userid in number bc the data is big for number
-
-// async function getUserById(userId: string): Promise<User[] | null> {
-//   if (!userId) {
-//     return null;
-//   }
+async function getUserById(userId: string): Promise<User | null> {
+  if (!userId) {
+    return null;
+  }
+  const user = await userRepository
+    .createQueryBuilder('user')
+    .where({ userId })
+    .select(['user.email', 'user.profileViews', 'user.joined0n', 'user.userId'])
+    .getOne();
+  return user;
+}
+// async function getUserById(userId: string): Promise<User[]> {
 //   const user = await userRepository
 //     .createQueryBuilder('user')
 //     .where({ userId })
@@ -76,19 +73,22 @@ async function getUserByEmail(email: string): Promise<User | null> {
 
 //   return user;
 // }
-async function getUserById(userId: string): Promise<User[] | null> {
-  const user = await userRepository.findOne({
-    select: {
-      userId: true,
-      email: true,
-      profileViews: true,
-      verifiedEmail: true,
-    },
-    where: { userId },
-  });
+// async function getUserById(userId: string): Promise<User[] | null> {
+//   if (!userId) {
+//     return null;
+//   }
+//   const user = await userRepository.findOne({
+//     select: {
+//       userId: true,
+//       email: true,
+//       profileViews: true,
+//       verifiedEmail: true,
+//     },
+//     where: { userId },
+//   });
 
-  return user;
-}
+//   return user;
+// }
 
 async function getViralUsers(): Promise<User[]> {
   const viralUsers = await userRepository
@@ -119,7 +119,50 @@ async function getUsersByViews(minViews: number): Promise<User[]> {
   return users;
 }
 
+// async function resetAllUnverifiedProfileViews(): Promise<void> {
+//   await userRepository
+//     .createQueryBuilder()
+//     .update(User)
+//     .set({ profileViews: 0 })
+//     .where('unverified <> true')
+//     .execute();
+// }
+
+async function incrementProfileViews(userData: User): Promise<User> {
+  const updatedUser = userData;
+  updatedUser.profileViews += 1;
+  await userRepository
+    .createQueryBuilder()
+    .update(User)
+    .set({ profileViews: updatedUser.profileViews })
+    .where({ userId: updatedUser.userId })
+    .execute();
+  return updatedUser;
+}
+
+async function updatedEmailAddress(userId: string, newEmail: string): Promise<void> {
+  await userRepository
+    .createQueryBuilder()
+    .update(User)
+    .set({ email: newEmail })
+    .where({ userId })
+    .execute();
+}
+
+// async function updatedEmailAddress(userId: string, newEmail: string): Promise<void> {
+//   // const updatedEmail = new User(newEmail);
+//   const updatedEmail = newEmail;
+//   const updatedUser = userId;
+//   await userRepository
+//     .createQueryBuilder()
+//     .update(User)
+//     .set({ verifiedEmail: updatedEmail })
+//     .where({ userId: updatedUser.userId })
+//     .execute();
+// }
+
 export {
+  allUserData,
   addUser,
   getUserByEmail,
   getUserById,
@@ -127,4 +170,6 @@ export {
   getAllUnverifiedUsers,
   getViralUsers,
   getUsersByViews,
+  incrementProfileViews,
+  updatedEmailAddress,
 };
