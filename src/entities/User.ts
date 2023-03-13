@@ -1,4 +1,12 @@
-import { Entity, PrimaryGeneratedColumn, Column } from 'typeorm';
+import {
+  Entity,
+  PrimaryGeneratedColumn,
+  Column,
+  OneToMany,
+  OneToOne,
+  JoinColumn,
+  Relation,
+} from 'typeorm';
 import { AvatarPhoto } from './AvatarPhoto';
 import { Review } from './Review';
 

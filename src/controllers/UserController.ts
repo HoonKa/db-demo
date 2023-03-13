@@ -85,19 +85,19 @@ async function updateUserEamil(req: Request, res: Response): Promise<void> {
   }
 }
 
-async function updateUserEamil(req: Request, res: Response): Promise<void> {
-  const { userId } = req.params as UserIdParam;
-  const { userEmail } = req.params as NewEmailBody;
-  // Get the user account
-  let user = await getUserById(userId);
-  if (!user) {
-    res.sendStatus(404); // 404 Not Found
-    return;
-  }
-  // Now update their profile views
-  user = await incrementProfileViews(user);
-  userEmail = updatedEmailAddress(userEamil);
-  res.json(user); // Send back the user's data
-}
+// async function updateUserEamil(req: Request, res: Response): Promise<void> {
+//   const { userId } = req.params as UserIdParam;
+//   const { userEmail } = req.params as NewEmailBody;
+//   // Get the user account
+//   let user = await getUserById(userId);
+//   if (!user) {
+//     res.sendStatus(404); // 404 Not Found
+//     return;
+//   }
+//   // Now update their profile views
+//   user = await incrementProfileViews(user);
+//   userEmail = updatedEmailAddress(userEamil);
+//   res.json(user); // Send back the user's data
+// }
 
 export { registerUser, logIn, getUserProfileData, updateUserEamil };

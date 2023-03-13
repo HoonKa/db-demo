@@ -1,7 +1,6 @@
-import {
-  Entity, PrimaryGeneratedColumn, Column, OneToOne, JoinColumn, Relation,
-} from "typeorm"
-import { User } from "./User"
+import { Entity, PrimaryGeneratedColumn, Column, OneToOne, Relation } from 'typeorm';
+// JoinColumn,
+import { User } from './User';
 
 @Entity()
 export class AvatarPhoto {

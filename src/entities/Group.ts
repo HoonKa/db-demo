@@ -15,3 +15,8 @@ export class Group {
   @ManyToMany(() => Artist, (artist) => artist.groups, { cascade: true })
   members: Relation<Artist>[];
 }
+
+// const newArtist = new Artist();
+// const newGroup = new Group();
+// new Group name = "";
+// newArtistGroup = [new Group];
