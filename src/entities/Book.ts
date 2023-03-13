@@ -1,5 +1,6 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Relation } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToOne, Relation, ManyToMany } from 'typeorm';
 import { Review } from './Review';
+import { Author } from './Author';
 
 @Entity()
 export class Book {
@@ -10,11 +11,14 @@ export class Book {
   title: string;
 
   @Column({ nullable: true })
-  year: number; // year of first publication
+  publishedYear: number; // year of first publication
 
   @Column({ default: false })
   public: boolean; // whether the book is the public domain.
 
   @ManyToOne(() => Review, (review) => review.books)
   review: Relation<Review>[];
+
+  @ManyToMany(() => Author, (authors) => authors.books)
+  authors: Relation<Author>[];
 }
