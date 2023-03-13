@@ -1,4 +1,4 @@
-import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, Relation } from 'typeorm';
+import { Entity, PrimaryGeneratedColumn, Column, ManyToMany, Relation, JoinTable } from 'typeorm';
 import { Book } from './Book';
 
 @Entity()
@@ -12,12 +12,7 @@ export class Author {
   @Column({ default: 'unknown' })
   countryOfOrigin: string;
 
-  @Column({ nullable: true })
-  publishedYear: number; // year of first publication
-
-  @Column({ default: false })
-  public: boolean; // whether the book is the public domain.
-
   @ManyToMany(() => Book, (books) => books.authors)
+  @JoinTable()
   books: Relation<Book>;
 }
